@@ -23,8 +23,8 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
         dialogo.setView(inflater.inflate(R.layout.layout_opciones,null));
         //ponemos un titulo
         dialogo.setMessage(getResources().getString(R.string.titOpciones));
-        dialogo.setPositiveButton("Aceptar",this);
-        dialogo.setNegativeButton("Cancelar",this);
+        dialogo.setPositiveButton("Jugar",this);
+        dialogo.setNegativeButton("Salir",this);
         return dialogo.create();
     }
     //gracias a implementar hhacemos este metodo sino habria que hacerlo en los this del dialogo
