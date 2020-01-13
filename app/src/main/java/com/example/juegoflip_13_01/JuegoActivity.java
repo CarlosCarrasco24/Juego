@@ -29,7 +29,6 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
         cargarViews();
         ponerListener();
         cargarOpciones();
-        iniciar();
     }
     private void cargarViews(){
         tvNombre=findViewById(R.id.tvNombre);
