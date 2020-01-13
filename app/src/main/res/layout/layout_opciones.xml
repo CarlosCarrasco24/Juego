@@ -10,8 +10,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:ems="10"
+        android:hint="@string/txtNombre"
         android:inputType="textPersonName"
-        android:text="@string/txtNombre"
         android:textStyle="bold" />
 
     <RadioGroup
