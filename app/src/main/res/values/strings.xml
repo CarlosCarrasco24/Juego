@@ -5,4 +5,5 @@
     <string name="rbFacil">Fácil</string>
     <string name="rbMedio">Medio</string>
     <string name="rbDificil">Dificil</string>
+    <string name="titOpciones">Opciones Juego</string>
 </resources>
