@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">JuegoFlip_13_01</string>
+    <string name="boton">Opciones</string>
+    <string name="txtNombre">Jugador</string>
+    <string name="rbFacil">Fácil</string>
+    <string name="rbMedio">Medio</string>
+    <string name="rbDificil">Dificil</string>
+</resources>
