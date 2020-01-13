@@ -6,4 +6,8 @@
     <string name="rbMedio">Medio</string>
     <string name="rbDificil">Dificil</string>
     <string name="titOpciones">Opciones Juego</string>
+    <string name="btnIniciar">Iniciar</string>
+    <string name="btnVolver">Volver</string>
+    <string name="progreso">Progreso: %d/100</string>
+    <string name="fase">Fase: %d</string>
 </resources>
