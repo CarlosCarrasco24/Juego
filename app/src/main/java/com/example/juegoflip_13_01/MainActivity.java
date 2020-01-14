@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import static java.lang.Character.toUpperCase;
 
-import static android.icu.lang.UCharacter.toUpperCase;
+
+
 
 public class MainActivity extends BaseActivity implements DialogoOpciones.DialogoOpcionesListener {
     public static final String VELOCIDAD="v",NOMBRE="n";
@@ -34,7 +36,7 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     @Override
     public void onDialogoOpcionesListener(String nombre, int velocidad) {
         Intent i=new Intent(this,JuegoActivity.class);
-        nombre=toUpperCase(nombre.charAt(0)+nombre.substring(1));
+        nombre=toUpperCase(nombre.charAt(0))+nombre.substring(1);
         i.putExtra(NOMBRE,nombre);
         i.putExtra(VELOCIDAD,velocidad);
         Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad);

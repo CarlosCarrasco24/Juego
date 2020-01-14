@@ -25,7 +25,7 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_juego);
-        setModoInversivo();
+        setModoInmersivo();
         cargarViews();
         ponerListener();
         cargarOpciones();
