@@ -75,7 +75,9 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
         tvFase.setText(String.format(getResources().getString(R.string.fase),fase));
         tvProgreso.setText(String.format(getResources().getString(R.string.progreso),progreso));
     }
-
+    public void volver(View v){
+        finish();
+    }
     public void iniciar(View v){
         numerarBotones(desordenarBotones());
         miProgreso=new ProgresoBarra();
