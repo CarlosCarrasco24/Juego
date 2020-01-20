@@ -60,6 +60,7 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
     //----------------------
     public void ponerListener(){
         for(int i=0;i<botones.size();i++){
+            botones.get(i).setEnabled(false);
             botones.get(i).setOnClickListener(this);
         }
     }
