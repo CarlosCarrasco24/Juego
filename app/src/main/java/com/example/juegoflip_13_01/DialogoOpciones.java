@@ -15,6 +15,7 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
     EditText etNombre;
     RadioButton rbFacil,rbMedio,rbDificil;
     DialogoOpcionesListener listener;
+
     @Override
     public Dialog onCreateDialog(Bundle saveInstanceState){
         AlertDialog.Builder dialogo=new AlertDialog.Builder(getActivity());

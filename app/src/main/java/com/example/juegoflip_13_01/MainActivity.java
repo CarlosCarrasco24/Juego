@@ -31,6 +31,8 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     int fase,velocidad;
     private boolean sdDisponible = false;
     private boolean sdAccesoEscritura = false;
+    String mensaje = "";
+    String linea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +54,25 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     public void onDialogoOpcionesListener(String nombre, int velocidad,int fase) {
         Intent i=new Intent(this,JuegoActivity.class);
         nombre=toUpperCase(nombre.charAt(0))+nombre.substring(1);
+        Log.d("DATOS----------:::::::::---->","antes de buscar"+nombre);
+        buscar();
+        cargar();
+        Log.d("DATOS----------:::::::::---->",""+mensaje);
+        if(nombre.equalsIgnoreCase("Guest")){
+            Log.d("DATOS----------:::::::::---->","en guest");
+            i.putExtra(NOMBRE,nombre);
+            i.putExtra(VELOCIDAD,velocidad);
+            i.putExtra(FASE,fase);
+            Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
+            startActivityForResult(i,REQ_PLAY);
+        }else{
+            Log.d("DATOS----------:::::::::---->","EN UN NOMBRE");
         i.putExtra(NOMBRE,nombre);
         i.putExtra(VELOCIDAD,velocidad);
         i.putExtra(FASE,fase);
-        buscar();
-        cargar();
         Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
         startActivityForResult(i,REQ_PLAY);
+        }
     }
 
     @Override
@@ -99,22 +113,25 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     }
     public void cargar() {
         buscar();
-        String nombreFichero= getIntent().getStringExtra(MainActivity.NOMBRE);
+        String nombreFichero= ""+nombre;
+        Log.d("DATOS----------:::::::::---->","EnCARGAR"+nombreFichero);
         if(nombreFichero!=null) {
+            Log.d("DATOS----------:::::::::---->","ENCONTRE FICHERO");
             if (sdDisponible == true && sdAccesoEscritura == true) {
                 try {
                     File ruta_sd = getExternalFilesDir(null);
                     File f = new File(ruta_sd.getAbsolutePath(), nombreFichero);
 
                         BufferedReader fin = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-                        String mensaje = "";
-                        String linea;
+
                         do {
                             linea = fin.readLine();
                             Log.d("DATOS LINEA--->",linea);
                             System.out.println(linea);
                             if (linea == null) break;
-                            mensaje += linea + "\n";
+                            nombre = linea + "\n";
+                            velocidad = Integer.parseInt(linea+"\n");
+                            fase=Integer.parseInt(linea+"\n");
                             Log.d("DATOS---->",mensaje);
                         } while (linea != null);
 
