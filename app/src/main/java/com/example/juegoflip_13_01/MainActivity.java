@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +21,9 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     public static final String VELOCIDAD="v",NOMBRE="n",FASE="d";
     public static final int REQ_PLAY=100;
     String nombre;
+    private boolean sdDisponible = false;
+    private boolean sdAccesoEscritura = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,24 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
         }
         else {
             Toast.makeText(this,"El usuario cancelo",Toast.LENGTH_LONG).show();
+        }
+    }
+    public void buscar(){
+        String estado = Environment.getExternalStorageState();
+        if (estado.equals(Environment.MEDIA_MOUNTED))
+        {
+            sdDisponible = true;
+            sdAccesoEscritura = true;
+        }
+        else if (estado.equals(Environment.MEDIA_MOUNTED_READ_ONLY))
+        {
+            sdDisponible = true;
+            sdAccesoEscritura = false;
+        }
+        else
+        {
+            sdDisponible = false;
+            sdAccesoEscritura = false;
         }
     }
 }

@@ -5,12 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +30,8 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
     private TextView tvNombre,tvProgreso,tvFase;
     private ProgressBar barra;
     private ProgresoBarra miProgreso;
+    private boolean sdDisponible = false;
+    private boolean sdAccesoEscritura = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +86,8 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
     public void volver(View v){
         finish();
     }
+
+
     public void iniciar(View v){
         numerarBotones(desordenarBotones());
         miProgreso=new ProgresoBarra();
@@ -115,6 +125,9 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
         Intent i =new Intent();
         i.putExtra(MainActivity.FASE,fase);
         i.putExtra(MainActivity.NOMBRE,nombre);
+        i.putExtra(MainActivity.VELOCIDAD,velocidad);
+        buscar();
+        guardar();
         setResult(RESULT_OK,i);
         finish();
     }
@@ -161,8 +174,49 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
                 miProgreso.execute(velocidad);
             }
         }
+    }
 
-
+    public void buscar(){
+        String estado = Environment.getExternalStorageState();
+        if (estado.equals(Environment.MEDIA_MOUNTED))
+        {
+            sdDisponible = true;
+            sdAccesoEscritura = true;
+        }
+        else if (estado.equals(Environment.MEDIA_MOUNTED_READ_ONLY))
+        {
+            sdDisponible = true;
+            sdAccesoEscritura = false;
+        }
+        else
+        {
+            sdDisponible = false;
+            sdAccesoEscritura = false;
+        }
+    }
+    public void guardar() {
+        buscar();
+        String nombreFichero=nombre.trim();
+        if(sdDisponible==true && sdAccesoEscritura==true){
+            if(nombre.trim().length()>0){
+                try{
+                    File ruta_sd = getExternalFilesDir(null);
+                    File f=new File(ruta_sd.getAbsolutePath(),nombreFichero);
+                    OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(f));
+                    fout.write(nombre.trim());
+                    fout.write(velocidad);
+                    fout.write(fase);
+                    fout.close();
+                }catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
+                }
+            }else{
+                Toast.makeText(this,getResources().getString(R.string.errorVacio),Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(this,getResources().getString(R.string.errorSD),Toast.LENGTH_LONG).show();
+        }
     }
 
 }

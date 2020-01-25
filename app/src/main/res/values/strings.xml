@@ -11,4 +11,6 @@
     <string name="progreso">Progreso: %d/100</string>
     <string name="fase">Fase: %d</string>
     <string name="finJuego">Enhorabuena: %s, Llegaste a la fase %d</string>
+    <string name="errorVacio">El nombre no puede estar vacio</string>
+    <string name="errorSD">No se encontro SD</string>
 </resources>
