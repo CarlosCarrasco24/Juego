@@ -12,6 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 import static java.lang.Character.toUpperCase;
 
 
@@ -41,12 +46,15 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
 
 
     @Override
-    public void onDialogoOpcionesListener(String nombre, int velocidad) {
+    public void onDialogoOpcionesListener(String nombre, int velocidad,int fase) {
         Intent i=new Intent(this,JuegoActivity.class);
         nombre=toUpperCase(nombre.charAt(0))+nombre.substring(1);
         i.putExtra(NOMBRE,nombre);
         i.putExtra(VELOCIDAD,velocidad);
-        Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad);
+        i.putExtra(FASE,fase);
+        buscar();
+        cargar();
+        Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
         startActivityForResult(i,REQ_PLAY);
     }
 
@@ -81,6 +89,37 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
         {
             sdDisponible = false;
             sdAccesoEscritura = false;
+        }
+    }
+    public void cargar() {
+        buscar();
+        String nombreFichero= getIntent().getStringExtra(MainActivity.NOMBRE);
+        if(nombreFichero!=null) {
+            if (sdDisponible == true && sdAccesoEscritura == true) {
+                try {
+                    File ruta_sd = getExternalFilesDir(null);
+                    File f = new File(ruta_sd.getAbsolutePath(), nombreFichero);
+
+                        BufferedReader fin = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+                        String mensaje = "";
+                        String linea;
+                        do {
+                            linea = fin.readLine();
+                            System.out.println(linea);
+                            if (linea == null) break;
+                            mensaje += linea + "\n";
+                            Log.d("DATOS---->",mensaje);
+                        } while (linea != null);
+
+                } catch (Exception ex) {
+                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
+                }
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.errorSD), Toast.LENGTH_LONG).show();
+            }
+
+        }else{
+
         }
     }
 }

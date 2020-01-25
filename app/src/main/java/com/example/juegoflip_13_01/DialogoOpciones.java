@@ -36,6 +36,7 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
         rbMedio=((Dialog)dialog).findViewById(R.id.rbMedio);
         rbDificil=((Dialog)dialog).findViewById(R.id.rbDificil);
         int velocidad=0;
+        int fase=0;
         String nombre=etNombre.getText().toString().trim();
         if(nombre.length()==0){
             nombre="Guest";
@@ -46,7 +47,7 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
         if(rbDificil.isChecked()) velocidad=20;
         switch (which){
             case DialogInterface.BUTTON_POSITIVE:
-                listener.onDialogoOpcionesListener(nombre,velocidad);
+                listener.onDialogoOpcionesListener(nombre,velocidad,fase);
                 break;
              case DialogInterface.BUTTON_NEGATIVE:
                  getActivity().finish();
@@ -56,7 +57,7 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
 
     //Necesito construir esta interfaz, nombre da igual
     public interface DialogoOpcionesListener{
-        public void onDialogoOpcionesListener(String nombre,int velocidad);
+        public void onDialogoOpcionesListener(String nombre,int velocidad,int fase);
     }
 
     //metodo obligatorio para atarlo a la clase que lo llama
@@ -69,4 +70,5 @@ public class DialogoOpciones extends DialogFragment implements DialogInterface.O
 
         }
     }
+
 }

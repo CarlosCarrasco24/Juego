@@ -77,7 +77,7 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
         velocidad=getIntent().getIntExtra(MainActivity.VELOCIDAD,40);
         nombre=getIntent().getStringExtra(MainActivity.NOMBRE);
         tvNombre.setText(nombre);
-        fase=1;
+        fase=getIntent().getIntExtra(MainActivity.FASE,0);
         contadorBotones=1;//ya veremos
         progreso=0;
         tvFase.setText(String.format(getResources().getString(R.string.fase),fase));
