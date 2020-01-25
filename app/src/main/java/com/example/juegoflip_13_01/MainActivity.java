@@ -15,7 +15,9 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import static java.lang.Character.toUpperCase;
 
@@ -26,6 +28,7 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
     public static final String VELOCIDAD="v",NOMBRE="n",FASE="d";
     public static final int REQ_PLAY=100;
     String nombre;
+    int fase,velocidad;
     private boolean sdDisponible = false;
     private boolean sdAccesoEscritura = false;
 
@@ -64,7 +67,10 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
         if(requestCode==REQ_PLAY && resultCode==RESULT_OK){
             AlertDialog.Builder alerta=new AlertDialog.Builder(this);
             nombre=data.getStringExtra(NOMBRE);
-            int fase=data.getIntExtra(FASE,0);
+            fase=data.getIntExtra(FASE,0);
+            velocidad=data.getIntExtra(VELOCIDAD,0);
+            Log.d("DATOS GUARDAR---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
+            guardar();
             alerta.setMessage(String.format(getResources().getString(R.string.finJuego),nombre,fase));
             alerta.setPositiveButton("Ok",null);
             alerta.show();
@@ -105,6 +111,7 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
                         String linea;
                         do {
                             linea = fin.readLine();
+                            Log.d("DATOS LINEA--->",linea);
                             System.out.println(linea);
                             if (linea == null) break;
                             mensaje += linea + "\n";
@@ -120,6 +127,31 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
 
         }else{
 
+        }
+    }
+
+    public void guardar() {
+        buscar();
+        String nombreFichero=nombre.trim();
+        if(sdDisponible==true && sdAccesoEscritura==true){
+            if(nombre.trim().length()>0){
+                try{
+                    File ruta_sd = getExternalFilesDir(null);
+                    File f=new File(ruta_sd.getAbsolutePath(),nombreFichero);
+                    OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(f));
+                    fout.write(nombre.trim()+"\n");
+                    fout.write(velocidad+"\n");
+                    fout.write(fase+"\n");
+                    fout.close();
+                }catch (Exception ex)
+                {
+                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
+                }
+            }else{
+                Toast.makeText(this,getResources().getString(R.string.errorVacio),Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(this,getResources().getString(R.string.errorSD),Toast.LENGTH_LONG).show();
         }
     }
 }

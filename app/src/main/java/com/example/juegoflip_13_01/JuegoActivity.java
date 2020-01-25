@@ -126,8 +126,6 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
         i.putExtra(MainActivity.FASE,fase);
         i.putExtra(MainActivity.NOMBRE,nombre);
         i.putExtra(MainActivity.VELOCIDAD,velocidad);
-        buscar();
-        guardar();
         setResult(RESULT_OK,i);
         finish();
     }
@@ -175,48 +173,4 @@ public class JuegoActivity extends BaseActivity implements View.OnClickListener 
             }
         }
     }
-
-    public void buscar(){
-        String estado = Environment.getExternalStorageState();
-        if (estado.equals(Environment.MEDIA_MOUNTED))
-        {
-            sdDisponible = true;
-            sdAccesoEscritura = true;
-        }
-        else if (estado.equals(Environment.MEDIA_MOUNTED_READ_ONLY))
-        {
-            sdDisponible = true;
-            sdAccesoEscritura = false;
-        }
-        else
-        {
-            sdDisponible = false;
-            sdAccesoEscritura = false;
-        }
-    }
-    public void guardar() {
-        buscar();
-        String nombreFichero=nombre.trim();
-        if(sdDisponible==true && sdAccesoEscritura==true){
-            if(nombre.trim().length()>0){
-                try{
-                    File ruta_sd = getExternalFilesDir(null);
-                    File f=new File(ruta_sd.getAbsolutePath(),nombreFichero);
-                    OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(f));
-                    fout.write(nombre.trim());
-                    fout.write(velocidad);
-                    fout.write(fase);
-                    fout.close();
-                }catch (Exception ex)
-                {
-                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
-                }
-            }else{
-                Toast.makeText(this,getResources().getString(R.string.errorVacio),Toast.LENGTH_LONG).show();
-            }
-        }else{
-            Toast.makeText(this,getResources().getString(R.string.errorSD),Toast.LENGTH_LONG).show();
-        }
-    }
-
 }
