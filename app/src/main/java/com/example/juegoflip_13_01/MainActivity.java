@@ -50,9 +50,8 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
         nombre1=prefs.getString("nombre","");
         velocidad1=prefs.getInt("velocidad",0);
         fase1=prefs.getInt("fase",0);
-        Log.d("DATOSPREFERENCES>","nombre="+nombre1+", velocidad="+velocidad1+", fase="+fase1);
         if(nombre.equalsIgnoreCase(nombre1) && !nombre1.equalsIgnoreCase("Guest")){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Se encontro una partida guardada");
             builder.setPositiveButton("Seguir", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -73,11 +72,12 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+        }else {
+            i.putExtra(NOMBRE, nombre);
+            i.putExtra(VELOCIDAD, velocidad);
+            Log.d("DATOS----------:::::::::---->", "nombre=" + nombre + ", velocidad=" + velocidad);
+            startActivityForResult(i, REQ_PLAY);
         }
-        i.putExtra(NOMBRE,nombre);
-        i.putExtra(VELOCIDAD,velocidad);
-        Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad);
-        startActivityForResult(i,REQ_PLAY);
     }
 
     @Override
@@ -88,7 +88,6 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
             nombre=data.getStringExtra(NOMBRE);
             fase=data.getIntExtra(FASE,0);
             velocidad=data.getIntExtra(VELOCIDAD,0);
-            Log.d("DATOS GUARDAR---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
             alerta.setMessage(String.format(getResources().getString(R.string.finJuego),nombre,fase));
             alerta.setPositiveButton("Ok",null);
             alerta.show();
