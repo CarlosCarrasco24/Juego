@@ -2,22 +2,17 @@ package com.example.juegoflip_13_01;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import static java.lang.Character.toUpperCase;
 
@@ -27,16 +22,13 @@ import static java.lang.Character.toUpperCase;
 public class MainActivity extends BaseActivity implements DialogoOpciones.DialogoOpcionesListener {
     public static final String VELOCIDAD="v",NOMBRE="n",FASE="d";
     public static final int REQ_PLAY=100;
-    String nombre;
-    int fase,velocidad;
-    private boolean sdDisponible = false;
-    private boolean sdAccesoEscritura = false;
-    String mensaje = "";
-    String linea;
+    String nombre,nombre1;
+    int fase,velocidad,fase1,velocidad1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
     }
     public void opciones(View w){
@@ -51,28 +43,41 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
 
 
     @Override
-    public void onDialogoOpcionesListener(String nombre, int velocidad,int fase) {
-        Intent i=new Intent(this,JuegoActivity.class);
+    public void onDialogoOpcionesListener(String nombre, int velocidad) {
+        final Intent i=new Intent(this,JuegoActivity.class);
         nombre=toUpperCase(nombre.charAt(0))+nombre.substring(1);
-        Log.d("DATOS----------:::::::::---->","antes de buscar"+nombre);
-        buscar();
-        cargar();
-        Log.d("DATOS----------:::::::::---->",""+mensaje);
-        if(nombre.equalsIgnoreCase("Guest")){
-            Log.d("DATOS----------:::::::::---->","en guest");
-            i.putExtra(NOMBRE,nombre);
-            i.putExtra(VELOCIDAD,velocidad);
-            i.putExtra(FASE,fase);
-            Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
-            startActivityForResult(i,REQ_PLAY);
-        }else{
-            Log.d("DATOS----------:::::::::---->","EN UN NOMBRE");
+        SharedPreferences prefs = getSharedPreferences("Juego",Context.MODE_PRIVATE);
+        nombre1=prefs.getString("nombre","");
+        velocidad1=prefs.getInt("velocidad",0);
+        fase1=prefs.getInt("fase",0);
+        Log.d("DATOSPREFERENCES>","nombre="+nombre1+", velocidad="+velocidad1+", fase="+fase1);
+        if(nombre.equalsIgnoreCase(nombre1) && !nombre1.equalsIgnoreCase("Guest")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Se encontro una partida guardada");
+            builder.setPositiveButton("Seguir", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    i.putExtra(NOMBRE,nombre1);
+                    i.putExtra(VELOCIDAD,velocidad1);
+                    i.putExtra(FASE,fase1);
+                    startActivityForResult(i,REQ_PLAY);
+                }
+            });
+            final String finalNombre = nombre;
+            final int velocidadFinal= velocidad;
+            builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    i.putExtra(NOMBRE, finalNombre);
+                    i.putExtra(VELOCIDAD,velocidadFinal);
+                    startActivityForResult(i,REQ_PLAY);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
         i.putExtra(NOMBRE,nombre);
         i.putExtra(VELOCIDAD,velocidad);
-        i.putExtra(FASE,fase);
-        Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
+        Log.d("DATOS----------:::::::::---->","nombre="+nombre+", velocidad="+velocidad);
         startActivityForResult(i,REQ_PLAY);
-        }
     }
 
     @Override
@@ -84,91 +89,18 @@ public class MainActivity extends BaseActivity implements DialogoOpciones.Dialog
             fase=data.getIntExtra(FASE,0);
             velocidad=data.getIntExtra(VELOCIDAD,0);
             Log.d("DATOS GUARDAR---->","nombre="+nombre+", velocidad="+velocidad+"fase="+fase);
-            guardar();
             alerta.setMessage(String.format(getResources().getString(R.string.finJuego),nombre,fase));
             alerta.setPositiveButton("Ok",null);
             alerta.show();
+            SharedPreferences prefs = getSharedPreferences("Juego", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("nombre", nombre);
+            editor.putInt("fase",fase);
+            editor.putInt("velocidad",velocidad);
+            editor.commit();
         }
         else {
             Toast.makeText(this,"El usuario cancelo",Toast.LENGTH_LONG).show();
-        }
-    }
-    public void buscar(){
-        String estado = Environment.getExternalStorageState();
-        if (estado.equals(Environment.MEDIA_MOUNTED))
-        {
-            sdDisponible = true;
-            sdAccesoEscritura = true;
-        }
-        else if (estado.equals(Environment.MEDIA_MOUNTED_READ_ONLY))
-        {
-            sdDisponible = true;
-            sdAccesoEscritura = false;
-        }
-        else
-        {
-            sdDisponible = false;
-            sdAccesoEscritura = false;
-        }
-    }
-    public void cargar() {
-        buscar();
-        String nombreFichero= ""+nombre;
-        Log.d("DATOS----------:::::::::---->","EnCARGAR"+nombreFichero);
-        if(nombreFichero!=null) {
-            Log.d("DATOS----------:::::::::---->","ENCONTRE FICHERO");
-            if (sdDisponible == true && sdAccesoEscritura == true) {
-                try {
-                    File ruta_sd = getExternalFilesDir(null);
-                    File f = new File(ruta_sd.getAbsolutePath(), nombreFichero);
-
-                        BufferedReader fin = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-
-                        do {
-                            linea = fin.readLine();
-                            Log.d("DATOS LINEA--->",linea);
-                            System.out.println(linea);
-                            if (linea == null) break;
-                            nombre = linea + "\n";
-                            velocidad = Integer.parseInt(linea+"\n");
-                            fase=Integer.parseInt(linea+"\n");
-                            Log.d("DATOS---->",mensaje);
-                        } while (linea != null);
-
-                } catch (Exception ex) {
-                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
-                }
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.errorSD), Toast.LENGTH_LONG).show();
-            }
-
-        }else{
-
-        }
-    }
-
-    public void guardar() {
-        buscar();
-        String nombreFichero=nombre.trim();
-        if(sdDisponible==true && sdAccesoEscritura==true){
-            if(nombre.trim().length()>0){
-                try{
-                    File ruta_sd = getExternalFilesDir(null);
-                    File f=new File(ruta_sd.getAbsolutePath(),nombreFichero);
-                    OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(f));
-                    fout.write(nombre.trim()+"\n");
-                    fout.write(velocidad+"\n");
-                    fout.write(fase+"\n");
-                    fout.close();
-                }catch (Exception ex)
-                {
-                    Log.e("Ficheros", "Error al escribir fichero a tarjeta SD");
-                }
-            }else{
-                Toast.makeText(this,getResources().getString(R.string.errorVacio),Toast.LENGTH_LONG).show();
-            }
-        }else{
-            Toast.makeText(this,getResources().getString(R.string.errorSD),Toast.LENGTH_LONG).show();
         }
     }
 }
